@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculateur d'Électricité Unifié (v1.0)</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Fichier de style externe -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="app-container">
+        <!-- Header -->
+        <div class="header">
+            <h1 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+                <i class="fa-solid fa-bolt"></i> Calculateur Électricité
+                <button class="btn btn-icon" onclick="openHelpModal()" title="Voir le mode d'emploi (README)"
+                    style="background: transparent; color: var(--text-muted); padding: 5px;">
+                    <i class="fa-regular fa-circle-question" style="font-size: 1.2rem;"></i>
+                </button>
+            </h1>
+            <p class="subtitle">Comprenez comment optimiser votre contrat Base vs HP/HC</p>
+        </div>
+
+        <!-- Profile Bar -->
+        <div class="profile-bar">
+            <div class="profile-selector">
+                <i class="fa-solid fa-file-invoice-dollar icon-muted"></i>
+                <select id="profileSelect" onchange="loadSelectedProfile()"></select>
+                <div class="tooltip-container">
+                    <button class="btn btn-icon" onclick="openProfileModal(true)">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <span class="tooltip-text">Modifier les tarifs de cet opérateur</span>
+                </div>
+                <div class="tooltip-container">
+                    <button class="btn btn-icon btn-primary-icon" onclick="openProfileModal(false)">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                    <span class="tooltip-text">Créer un nouveau profil (ex: nouveau fournisseur)</span>
+                </div>
+            </div>
+
+            <div class="profile-actions">
+                <div class="tooltip-container">
+                    <button class="btn btn-icon" onclick="exportDatabase()">
+                        <i class="fa-solid fa-download"></i>
+                    </button>
+                    <span class="tooltip-text">Sauvegarder vos profils tarifaires sur votre PC (format JSON)</span>
+                </div>
+                <div class="tooltip-container">
+                    <button class="btn btn-icon" onclick="document.getElementById('importFile').click()">
+                        <i class="fa-solid fa-upload"></i>
+                    </button>
+                    <span class="tooltip-text">Importer des profils tarifaires depuis votre PC</span>
+                </div>
+                <input type="file" id="importFile" accept=".json" style="display: none;"
+                    onchange="importDatabase(event)">
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Mode Tabs -->
+            <div class="tabs">
+                <div class="tab active" data-mode="1" onclick="switchMode(1)">
+                    <i class="fa-solid fa-chart-pie"></i> J'ai ma conso Totale
+                </div>
+                <div class="tab" data-mode="2" onclick="switchMode(2)">
+                    <i class="fa-solid fa-moon"></i> J'ai ma conso Heures Pleines
+                </div>
+            </div>
+
+            <!-- Form -->
+            <div class="form-section">
+                <!-- Puissance -->
+                <div class="form-group">
+                    <label>
+                        Puissance souscrite (kVA)
+                        <div class="tooltip-container inline">
+                            <i class="fa-solid fa-circle-question help-icon"></i>
+                            <span class="tooltip-text">La puissance de votre compteur (généralement 6 ou 9 kVA pour un
+                                foyer standard). Impacte le prix de l'abonnement.</span>
+                        </div>
+                    </label>
+                    <div class="radios" id="kvaRadios">
+                        <div class="radio-card">
+                            <input type="radio" name="kva" id="kva6" value="6" checked>
+                            <label for="kva6">6 kVA</label>
+                        </div>
+                        <div class="radio-card">
+                            <input type="radio" name="kva" id="kva9" value="9">
+                            <label for="kva9">9 kVA</label>
+                        </div>
+                        <div class="radio-card">
+                            <input type="radio" name="kva" id="kva12" value="12">
+                            <label for="kva12">12 kVA</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Consommation -->
+                <div class="form-group">
+                    <label id="consoLabel" for="consoInput">
+                        <span class="text-highlight">Consommation annuelle TOTALE (kWh)</span>
+                        <div class="tooltip-container inline">
+                            <i class="fa-solid fa-circle-question help-icon"></i>
+                            <span class="tooltip-text" id="consoTooltip">Somme de toutes vos consommations (HP + HC) sur
+                                une année.</span>
+                        </div>
+                    </label>
+                    <input type="number" id="consoInput" placeholder="Ex: 8500" min="0">
+                    <span class="input-hint" id="consoHint">Entrez la somme de toutes vos consommations annuelles pour
+                        connaître la répartition idéale.</span>
+                </div>
+
+                <div class="calc-btn-container">
+                    <button class="btn btn-primary btn-large" onclick="calculate()">
+                        <i class="fa-solid fa-calculator"></i> Calculer
+                    </button>
+                </div>
+            </div>
+
+            <!-- Result Panel -->
+            <div id="resultPanel" class="result-panel">
+                <div id="resultIcon" class="result-icon"></div>
+                <div id="resultText" class="result-text"></div>
+                <div id="resultValue" class="result-value"></div>
+                <div id="resultSubtext" class="result-subtext"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit/Add Modal -->
+    <div class="modal-overlay" id="profileModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modalTitle">Éditer le profil tarifaire</h2>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editId">
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Nom de l'offre (Opérateur)</label>
+                        <input type="text" id="editName" placeholder="Ex: Alpiq, EDF Tarif Bleu...">
+                    </div>
+                    <div class="form-group">
+                        <label>Date des tarifs</label>
+                        <input type="date" id="editDate">
+                    </div>
+                </div>
+
+                <div class="tariff-card">
+                    <h4><i class="fa-solid fa-bolt"></i> Prix du kWh TTC (€)</h4>
+                    <div class="grid-3">
+                        <div class="form-group">
+                            <label>Base</label>
+                            <input type="number" id="editBaseKwh" step="0.000001">
+                        </div>
+                        <div class="form-group">
+                            <label>Heures Pleines (HP)</label>
+                            <input type="number" id="editHpKwh" step="0.000001">
+                        </div>
+                        <div class="form-group">
+                            <label>Heures Creuses (HC)</label>
+                            <input type="number" id="editHcKwh" step="0.000001">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tariff-card">
+                    <h4><i class="fa-solid fa-file-contract"></i> Abonnements Annuels TTC (€)</h4>
+                    <div class="grid-3 table-header">
+                        <div>Puissance</div>
+                        <div>Option Base</div>
+                        <div>Option HP/HC</div>
+                    </div>
+
+                    <div class="grid-3 table-row">
+                        <div class="row-label">6 kVA</div>
+                        <input type="number" id="editAbo6Base" step="0.01">
+                        <input type="number" id="editAbo6Hphc" step="0.01">
+                    </div>
+                    <div class="grid-3 table-row">
+                        <div class="row-label">9 kVA</div>
+                        <input type="number" id="editAbo9Base" step="0.01">
+                        <input type="number" id="editAbo9Hphc" step="0.01">
+                    </div>
+                    <div class="grid-3 table-row">
+                        <div class="row-label">12 kVA</div>
+                        <input type="number" id="editAbo12Base" step="0.01">
+                        <input type="number" id="editAbo12Hphc" step="0.01">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" id="btnDeleteProfile" onclick="deleteCurrentProfile()">Supprimer</button>
+                <div style="flex:1;"></div>
+                <button class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+                <button class="btn btn-primary" onclick="saveProfile()">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="sys-msg" id="sysMsg">Message</div>
+
+    <!-- Help/Readme Modal -->
+    <div class="modal-overlay" id="helpModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2><i class="fa-regular fa-circle-question"></i> Mode d'emploi</h2>
+                <button class="modal-close" onclick="closeHelpModal()">×</button>
+            </div>
+            <div class="modal-body" style="line-height: 1.6; color: var(--text-main);">
+                <h3 style="color: var(--primary); margin-top: 0;">🎯 Fonctionnalités</h3>
+                <ul style="padding-left: 20px;">
+                    <li><strong>Deux modes de calcul</strong> : Calculez selon votre conso Totale, ou juste votre conso
+                        en Heures Pleines.</li>
+                    <li><strong>Gestionnaire de Profils</strong> : Configurez et sauvegardez les tarifs de différents
+                        opérateurs.</li>
+                    <li><strong>100% Privé</strong> : Tout fonctionne sur votre navigateur et aucune donnée n'est
+                        envoyée sur internet.</li>
+                </ul>
+
+                <h3 style="color: var(--primary);">🚀 Utilisation</h3>
+                <ol style="padding-left: 20px;">
+                    <li>Sélectionnez le bon <strong>profil tarifaire</strong> en haut (ou créez-en un avec le bouton +).
+                    </li>
+                    <li>Choisissez la <strong>puissance</strong> de votre compteur (ex: 6 kVA ou 9 kVA).</li>
+                    <li>Entrez votre <strong>consommation</strong> dans la case prévue. Si vous avez un doute, laissez
+                        votre souris sur les icônes <strong>?</strong> pour avoir de l'aide sur chaque case.</li>
+                    <li>Cliquez sur <strong style="color: var(--primary);">Calculer</strong> pour voir le résultat.</li>
+                </ol>
+
+                <h3 style="color: var(--primary);">💾 Sauvegarde (Export / Import)</h3>
+                <p>
+                    Utilisez les petits boutons <i class="fa-solid fa-download icon-muted"></i> et <i
+                        class="fa-solid fa-upload icon-muted"></i> en haut à droite pour télécharger vos tarifs
+                    personnalisés (sous forme d'un petit fichier .json) et pouvoir les recharger sur un autre
+                    ordinateur.
+                </p>
+                <hr style="border:0; border-top:1px solid var(--border); margin:20px 0;">
+                <p style="text-align:center; font-size:0.9em; color:var(--text-muted);"><em>Cet outil est fourni pour
+                        vous aider à optimiser vos factures d'énergie.<br>Version 1.0 (Thème Sombre & PWA)</em></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeHelpModal()">J'ai compris</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fichier de script externe -->
+    <script src="app.js"></script>
+
+    <!-- PWA Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then((registration) => {
+                        console.log('ServiceWorker enregistré avec succès : ', registration.scope);
+                    })
+                    .catch((error) => {
+                        console.log('Échec de l\'enregistrement du ServiceWorker : ', error);
+                    });
+            });
+        }
+    </script>
+</body>
+
+</html>
