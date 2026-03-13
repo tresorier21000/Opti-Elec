@@ -9,21 +9,20 @@ OutputBaseFilename=Setup_Calc_Elec_v1.0
 Compression=lzma
 SolidCompression=yes
 SetupIconFile=favicon.ico
-; Note: Inno Setup normally requires an .ico file for the setup icon.
-; If you don't have one, just remove the SetupIconFile line.
 
 [Files]
 Source: "index.html"; DestDir: "{app}"; Flags: ignoreversion
 Source: "style.css"; DestDir: "{app}"; Flags: ignoreversion
 Source: "app.js"; DestDir: "{app}"; Flags: ignoreversion
 Source: "favicon.svg"; DestDir: "{app}"; Flags: ignoreversion
+Source: "favicon.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "manifest.json"; DestDir: "{app}"; Flags: ignoreversion
 Source: "sw.js"; DestDir: "{app}"; Flags: ignoreversion
 Source: "README.md"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
-Name: "{group}\Calculateur d'Électricité"; Filename: "{app}\index.html"; IconFilename: "{app}\favicon.svg"
-Name: "{autodesktop}\Calculateur d'Électricité"; Filename: "{app}\index.html"; Tasks: desktopicon; IconFilename: "{app}\favicon.svg"
+Name: "{group}\Calculateur d'Électricité"; Filename: "{app}\index.html"; IconFilename: "{app}\favicon.ico"
+Name: "{autodesktop}\Calculateur d'Électricité"; Filename: "{app}\index.html"; Tasks: desktopicon; IconFilename: "{app}\favicon.ico"
 
 [Tasks]
 Name: "desktopicon"; Description: "Créer une icône sur le bureau"; GroupDescription: "Icônes supplémentaires :"
