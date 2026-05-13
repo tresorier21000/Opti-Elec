@@ -1,11 +1,11 @@
 [Setup]
 AppName=Calculateur d'Électricité Unifié
-AppVersion=1.0
+AppVersion=1.01
 AppPublisher=Antigravity
 DefaultDirName={autopf}\Calculateur Electricite
 DefaultGroupName=Calculateur Electricite
 OutputDir=.
-OutputBaseFilename=Setup_Calc_Elec_v1.0
+OutputBaseFilename=Setup_Opti-Elec_v1.01
 Compression=lzma
 SolidCompression=yes
 SetupIconFile=favicon.ico

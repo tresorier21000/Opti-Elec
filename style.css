@@ -237,6 +237,19 @@ select:focus {
     border-color: #313244 transparent transparent transparent;
 }
 
+/* Special class for tooltips on the right edge */
+.tooltip-container.tooltip-right .tooltip-text {
+    left: auto;
+    right: 0;
+    transform: none;
+}
+
+.tooltip-container.tooltip-right .tooltip-text::after {
+    left: auto;
+    right: 15px;
+    margin-left: 0;
+}
+
 .tooltip-container:hover .tooltip-text {
     visibility: visible;
     opacity: 1;

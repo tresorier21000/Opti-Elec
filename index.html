@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculateur d'Électricité Unifié (v1.0)</title>
+    <title>Calculateur d'Électricité Unifié (v1.01)</title>
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <!-- PWA Manifest -->
@@ -55,13 +55,13 @@
             </div>
 
             <div class="profile-actions">
-                <div class="tooltip-container">
+                <div class="tooltip-container tooltip-right">
                     <button class="btn btn-icon" onclick="exportDatabase()">
                         <i class="fa-solid fa-download"></i>
                     </button>
                     <span class="tooltip-text">Sauvegarder vos profils tarifaires sur votre PC (format JSON)</span>
                 </div>
-                <div class="tooltip-container">
+                <div class="tooltip-container tooltip-right">
                     <button class="btn btn-icon" onclick="document.getElementById('importFile').click()">
                         <i class="fa-solid fa-upload"></i>
                     </button>
@@ -254,7 +254,7 @@
                 </p>
                 <hr style="border:0; border-top:1px solid var(--border); margin:20px 0;">
                 <p style="text-align:center; font-size:0.9em; color:var(--text-muted);"><em>Cet outil est fourni pour
-                        vous aider à optimiser vos factures d'énergie.<br>Version 1.0 (Thème Sombre & PWA)</em></p>
+                        vous aider à optimiser vos factures d'énergie.<br>Version 1.01 (Thème Sombre & PWA) - <a href="mailto:yves.balestra@gmail.com" style="color:var(--primary); text-decoration:none;">yves.balestra@gmail.com</a></em></p>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-primary" onclick="closeHelpModal()">J'ai compris</button>

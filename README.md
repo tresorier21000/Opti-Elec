@@ -1,4 +1,5 @@
-# Calculateur d'Électricité Unifié ⚡ (v1.0)
+# Calculateur d'Électricité Unifié ⚡ (v1.01)
+[yves.balestra@gmail.com](mailto:yves.balestra@gmail.com)
 
 Une application web simple et moderne permettant de calculer la rentabilité de votre contrat d'électricité en comparant l'option de **Base** et l'option **Heures Pleines / Heures Creuses (HP/HC)**.
 

@@ -1,4 +1,4 @@
-// Calculateur d'Électricité Unifié - Version 1.0 (PWA)
+// Calculateur d'Électricité Unifié - Version 1.01 (PWA)
 // Database & State Management
 const DB_KEY = 'calc_elec_profiles_v1';
 const DEFAULT_PROFILE = {

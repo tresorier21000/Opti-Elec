@@ -1,4 +1,4 @@
-const CACHE_NAME = 'calc-elec-v1.0';
+const CACHE_NAME = 'calc-elec-v1.01';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
